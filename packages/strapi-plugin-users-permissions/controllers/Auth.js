@@ -65,7 +65,7 @@ module.exports = {
         return ctx.badRequest(null, ctx.request.admin ? [{ messages: [{ id: 'Auth.form.error.blocked' }] }] : 'Your account has been blocked by the administrator.');
       }
 
-      if (user.role.type !== 'root' && ctx.request.admin) {
+      if (!['root', 'internal'].includes(user.role.type) && ctx.request.admin) {
         return ctx.badRequest(null, ctx.request.admin ? [{ messages: [{ id: 'Auth.form.error.noAdminAccess' }] }] : `You're not an administrator.`);
       }
 
