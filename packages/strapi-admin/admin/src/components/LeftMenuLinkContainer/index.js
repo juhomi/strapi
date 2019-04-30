@@ -13,10 +13,12 @@ import LeftMenuLink from '../LeftMenuLink';
 
 import styles from './styles.scss';
 import messages from './messages.json';
+import auth from 'utils/auth';
+
 
 function LeftMenuLinkContainer({ layout, plugins }) {
   const pluginsObject = plugins.toJS();
-  
+
   // Generate the list of sections
   const pluginsSections = Object.keys(pluginsObject).reduce((acc, current) => {
     pluginsObject[current].leftMenuSections.forEach((section = {}) => {
@@ -39,7 +41,7 @@ function LeftMenuLinkContainer({ layout, plugins }) {
 
     return acc;
   }, {});
-  
+
   const linkSections = Object.keys(pluginsSections).map((current, j) => {
     const contentTypesToShow = get(layout, 'contentTypesToShow');
     const contentTypes = contentTypesToShow
@@ -91,17 +93,19 @@ function LeftMenuLinkContainer({ layout, plugins }) {
   );
 
   const hasSettingsManager = get(pluginsObject, 'settings-manager', null);
+  const isAdmin = auth.getUserInfo().role.type == 'root';
 
   return (
     <div className={styles.leftMenuLinkContainer}>
       {linkSections}
-      <div>
+      {isAdmin && (<div>
         <p className={styles.title}>
           <FormattedMessage {...messages.plugins} />
         </p>
         <ul className={styles.list}>{pluginsLinks}</ul>
-      </div>
-      <div>
+      </div>)}
+
+      {isAdmin && (<div>
         <p className={styles.title}>
           <FormattedMessage {...messages.general} />
         </p>
@@ -120,7 +124,7 @@ function LeftMenuLinkContainer({ layout, plugins }) {
             />
           )}
         </ul>
-      </div>
+      </div>)}
     </div>
   );
 }
